@@ -8,15 +8,19 @@
   example-local {
     key = value
   }
+}*/
+
+
+data "github_repository" "template" {
+  owner = var.template_owner
+  name  = var.template_repo
 }
 
-data "vault_auth_backend" "kubernetes" {
-  namespace = var.namespace
-  path      = "kubernetes"
+resource "github_repository" "example" {
+  name        = var.repo_name
+  description = "New repository created from template"
+  template_repository {
+    repository_id = data.github_repository.template.id
+  }
+  owner       = var.org
 }
-
-resource "vault_policy" "policies" {
-  namespace = var.namespace
-  name      = "name"
-  policy    = "policy"
-} */
