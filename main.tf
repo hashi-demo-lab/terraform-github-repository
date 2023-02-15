@@ -12,15 +12,43 @@
 
 
 data "github_repository" "template" {
-  owner = var.template_owner
-  name  = var.template_repo
+  full_name  = concat(var.org, ""/"", var.repo_name)
 }
 
-resource "github_repository" "example" {
-  name        = var.repo_name
+data "github_repository" "existing_repository" {
+  name = var.repo_name
+}
+
+data "github_team" "existing_team" {
+  name = var.team_name
+}
+
+resource "github_team" "new_team" {
+  name = var.team_name
+
+  # Ensure that the team doesn't already exist
+  count = data.github_team.existing_team.name == var.team_name ? 0 : 1
+}
+
+
+resource "github_repository" "new_repository" {
+  # Ensure that the repository doesn't already exist
+  count = data.github_repository.existing_repository.name == var.repo_name ? 0 : 1
+
+  name = var.repo_name
   description = "New repository created from template"
-  template_repository {
-    repository_id = data.github_repository.template.id
+  
+  template {
+    owner = var.template_owner
+    repository = data.github_repository.template.id
+    include_all_branches = var.template_include_branches
   }
   owner       = var.org
+}
+
+
+resource "github_team_repository" "team_repository_access" {
+  team_id    = try( github_team.new_team.id , data.github_team.existing_team.id)
+  repository = try( github_repository.new_repository.name, data.github_repository.existing_repository.name)
+  permission = var.permission
 }
