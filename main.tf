@@ -39,7 +39,7 @@ resource "github_repository" "new_repository" {
   lifecycle {
     ignore_changes = all
   }
-  
+
 }
 
 resource "github_team_repository" "team_repository_access" {
