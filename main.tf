@@ -27,7 +27,6 @@ resource "github_team" "new_team" {
 }
 
 resource "github_repository" "new_repository" {
-  count       = data.github_repository.existing.name == var.github_repo_name ? 0 : 1
   name        = var.github_repo_name
   description = var.github_repo_desc
   visibility  = var.github_repo_visibility
@@ -36,10 +35,15 @@ resource "github_repository" "new_repository" {
     repository           = data.github_repository.template.id
     include_all_branches = var.github_template_include_branches
   }
+
+  lifecycle {
+    ignore_changes = all
+  }
+  
 }
 
 resource "github_team_repository" "team_repository_access" {
   team_id    = try(github_team.new_team[0].id, local.team_found.id)
-  repository = try(github_repository.new_repository[0].name, data.github_repository.existing.name)
+  repository = try(github_repository.new_repository.name, data.github_repository.existing.name)
   permission = var.github_repo_permission
 }

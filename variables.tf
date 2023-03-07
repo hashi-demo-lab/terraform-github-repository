@@ -18,6 +18,7 @@ variable "github_repo_name" {
 variable "github_repo_desc" {
   description = "The description of the new repository"
   type        = string
+  default     = "this repo was created by Terraform"
 }
 
 
