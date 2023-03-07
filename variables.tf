@@ -7,6 +7,7 @@ variable "github_token" {
 
 variable "github_org" {
   description = "GitHub organization name"
+  default = "hashicorp-demo-lab"
 }
 
 variable "github_repo_name" {
@@ -16,18 +17,22 @@ variable "github_repo_name" {
 
 variable "github_team_name" {
   description = "github team name"
+  default = "demo team"
 }
 
 variable "github_template_owner" {
-  description = "The owner of the repository template"
+  description = "The GitHub organization or user the template repository is owned by"
+  default = "hashicorp-demo-lab"
 }
 
 variable "github_repo_permission" {
   description = "Repository permission"
+  default = "admin"
 }
 
 variable "github_template_repo" {
   description = "The name of the repository template"
+  default = ""
 }
 
 variable "github_template_include_branches" {
