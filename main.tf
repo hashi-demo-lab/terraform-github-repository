@@ -3,40 +3,34 @@
 #  Data blocks next to resources that are referencing them
 #  Reduce hard coded inputs where possible. They are used below for simplicity to show structure
 
-/* local {
-  # Local that is a map that is used for something
-  example-local {
-    key = value
-  }
-}*/
 
-
-data "github_repository" "template" {
-  full_name = "${var.github_org}/${var.github_repo_name}"
+# get all teams and lookup if existing
+locals {
+  team_exists = contains([for team in data.github_organization_teams.all.teams : team.name], var.github_team_name)
+  teams       = [for team in data.github_organization_teams.all.teams : team if team.name == var.github_team_name]
+  team_found  = length(local.teams) > 0 ? local.teams[0] : null
 }
 
-data "github_repository" "existing_repository" {
+data "github_repository" "template" {
+  full_name = "${var.github_org}/${var.github_template_repo}"
+}
+
+data "github_repository" "existing" {
   name = var.github_repo_name
 }
 
-data "github_team" "existing_team" {
-  slug = var.github_team_name
-}
+data "github_organization_teams" "all" {}
 
 resource "github_team" "new_team" {
-  name = var.github_team_name
-
-  # Ensure that the team doesn't already exist
-  count = data.github_team.existing_team.name == var.github_team_name ? 0 : 1
+  count = local.team_exists ? 0 : 1
+  name  = var.github_team_name
 }
 
-
 resource "github_repository" "new_repository" {
-  # Ensure that the repository doesn't already exist
-  count       = data.github_repository.existing_repository.name == var.github_repo_name ? 0 : 1
+  count       = data.github_repository.existing.name == var.github_repo_name ? 0 : 1
   name        = var.github_repo_name
-  description = "New repository created from template"
-
+  description = var.github_repo_desc
+  visibility  = var.github_repo_visibility
   template {
     owner                = var.github_template_owner
     repository           = data.github_repository.template.id
@@ -44,9 +38,8 @@ resource "github_repository" "new_repository" {
   }
 }
 
-
 resource "github_team_repository" "team_repository_access" {
-  team_id    = try(github_team.new_team[0].id, data.github_team.existing_team.id)
-  repository = try(github_repository.new_repository[0].name, data.github_repository.existing_repository.name)
+  team_id    = try(github_team.new_team[0].id, local.team_found.id)
+  repository = try(github_repository.new_repository[0].name, data.github_repository.existing.name)
   permission = var.github_repo_permission
 }
