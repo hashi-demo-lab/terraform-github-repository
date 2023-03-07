@@ -2,30 +2,36 @@
 
 variable "github_token" {
   description = "GitHub access token"
+  sensitive = true
 }
 
-variable "org" {
+variable "github_org" {
   description = "GitHub organization name"
 }
 
-variable "repo_name" {
+variable "github_repo_name" {
   description = "The name of the new repository"
-  type = string
+  type        = string
 }
 
-variable "team_name" {
+variable "github_team_name" {
   description = "github team name"
 }
 
-variable "template_owner" {
+variable "github_template_owner" {
   description = "The owner of the repository template"
 }
 
-variable "template_repo" {
+variable "github_repo_permission" {
+  description = "Repository permission"
+}
+
+variable "github_template_repo" {
   description = "The name of the repository template"
 }
 
-variable "template_include_branches" {
+variable "github_template_include_branches" {
   description = "include all branches from github template"
-  type = bool
+  type        = bool
+  default = false
 }
