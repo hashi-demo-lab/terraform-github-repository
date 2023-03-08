@@ -6,9 +6,9 @@
 } */
 
 
-/* output "teams" {
-  value = data.github_organization_teams.root_teams.teams
-} */
+output "github_repo" {
+  value = github_repository.new_repository.name
+}
 
 output "team_exists" {
   value = local.team_exists

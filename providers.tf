@@ -4,8 +4,9 @@
 # providers.tf shouldn't be present in module definitions. They should generally inherit the root module provider unless you need to do aliasing
 
 
-provider "github" {
+/* provider "github" {
   # Configuration options
   owner = var.github_org
 }
 
+ */
