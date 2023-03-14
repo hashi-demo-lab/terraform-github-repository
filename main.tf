@@ -19,7 +19,11 @@ data "github_repository" "existing" {
   name = var.github_repo_name
 }
 
-data "github_organization_teams" "all" {}
+#This should be removed from module and have as optional input - not efficient when using for_each on module
+data "github_organization_teams" "all" {
+  root_teams_only = true
+  summary_only = true
+}
 
 resource "github_team" "new_team" {
   count = local.team_exists ? 0 : 1
@@ -37,6 +41,7 @@ resource "github_repository" "new_repository" {
   }
 
   lifecycle {
+    #depending on requirements this may need to change
     ignore_changes = all
   }
 
