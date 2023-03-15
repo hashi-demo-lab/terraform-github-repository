@@ -26,7 +26,7 @@ data "github_organization_teams" "all" {
 }
 
 resource "github_team" "new_team" {
-  count = local.team_exists ? 0 : 1
+  count = length(local.teams) > 0 ? 0 : 1
   name  = var.github_team_name
 }
 
