@@ -29,7 +29,7 @@ variable "github_repo_visibility" {
 
 variable "github_template_owner" {
   description = "The GitHub organization or user the template repository is owned by"
-  default     = "hashi-demo-lab"
+  default     = "srlynch1"
 }
 
 variable "github_template_name" {
